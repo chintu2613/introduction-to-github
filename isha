@@ -1,0 +1,63 @@
+import React, { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { PlusCircle, UploadCloud } from "lucide-react";
+
+export default function BrandVideoLinks() {
+  const [logo, setLogo] = useState(null);
+  const [videoLinks, setVideoLinks] = useState([]);
+  const [newLink, setNewLink] = useState("");
+
+  const handleLogoUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setLogo(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const addVideoLink = () => {
+    if (newLink.trim() !== "") {
+      setVideoLinks([...videoLinks, newLink]);
+      setNewLink("");
+    }
+  };
+
+  return (
+    <div className="p-6 flex flex-col items-center space-y-6">
+      <h1 className="text-2xl font-bold">Brand Video Links</h1>
+      <label className="cursor-pointer flex flex-col items-center border p-4 rounded-lg shadow-md">
+        <UploadCloud className="w-6 h-6 mb-2" />
+        <span>Upload Brand Logo</span>
+        <input type="file" className="hidden" accept="image/*" onChange={handleLogoUpload} />
+      </label>
+      {logo && <img src={logo} alt="Brand Logo" className="h-24 w-auto rounded-md shadow-lg" />}
+      <div className="flex space-x-2">
+        <Input
+          type="url"
+          placeholder="Enter video link"
+          value={newLink}
+          onChange={(e) => setNewLink(e.target.value)}
+        />
+        <Button onClick={addVideoLink}>
+          <PlusCircle className="w-5 h-5" />
+        </Button>
+      </div>
+      <div className="w-full max-w-md space-y-4">
+        {videoLinks.map((link, index) => (
+          <Card key={index}>
+            <CardContent className="p-4 text-center">
+              <a href={link} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                Video {index + 1}
+              </a>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
